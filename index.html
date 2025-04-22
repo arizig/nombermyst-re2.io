@@ -1,67 +1,44 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Guess the Mystery Number</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 2rem;
-      background: #f4f4f4;
-    }
-    .container {
-      max-width: 400px;
-      margin: auto;
-      padding: 2rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
-    }
-    #result {
-      margin-top: 1rem;
-      font-weight: bold;
-    }
-    #hint {
-      margin-top: 0.5rem;
-    }
-    #play-again {
-      display: none;
-      margin-top: 1rem;
-    }
-    .fade-in {
-      animation: fadeIn 0.5s ease-in;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu : Devinez le Nombre Mystère</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
-    <h2>Guess the Mystery Number</h2>
+    <div class="game-container">
+        <h1>
+            <img src="logo.png" alt="Logo" style="width: 30px; height: 30px; vertical-align: middle;">
+            Devinez le Nombre Mystère</h1>
 
-    <label for="difficulty">Choose Difficulty:</label>
-    <select id="difficulty">
-      <option value="easy">Easy (1-10, 3 tries)</option>
-      <option value="medium">Medium (1-50, 2 tries)</option>
-      <option value="hard">Hard (1-100, 1 try)</option>
-    </select>
+        <div class="form-group">
+            <label for="difficulty">Choisissez la difficulté :</label>
+            <select id="difficulty">
+                <option value="easy">Facile (1 à 10)</option>
+                <option value="medium">Moyen (1 à 50)</option>
+                <option value="hard">Difficile (1 à 100)</option>
+            </select>
+        </div>
 
-    <div id="game-area">
-      <p>Enter a number:</p>
-      <input type="number" id="guess-input" />
-      <button id="submit-btn">Submit Guess</button>
-      <p id="attempts"></p>
-      <div id="result" class="fade-in"></div>
-      <div id="hint"></div>
+        <div class="form-group">
+            <label for="guess">Entrez un nombre :</label>
+            <input type="number" id="guess" min="1" placeholder="Votre nombre...">
+        </div>
+
+        <button id="submitGuess">Soumettre</button>
+
+        <div id="timer">⏱️ Temps restant : <span id="timeLeft">30</span> sec</div>
+        <div id="message" class="message"></div>
+        <div id="attempts" class="attempts"></div>
+
+        <button id="restartButton" style="display: none;">🔁 Rejouer</button>
     </div>
 
-    <button id="play-again">Play Again</button>
-  </div>
+    <!-- Sons -->
+    <audio id="winSound" src="win.mp3"></audio>
+    <audio id="loseSound" src="lose.mp3"></audio>
 
-  <script src="script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
