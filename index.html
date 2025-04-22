@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guess the Mystery Number</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background: #f4f4f4;
+    }
+    .container {
+      max-width: 400px;
+      margin: auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    #result {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    #hint {
+      margin-top: 0.5rem;
+    }
+    #play-again {
+      display: none;
+      margin-top: 1rem;
+    }
+    .fade-in {
+      animation: fadeIn 0.5s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Guess the Mystery Number</h2>
+
+    <label for="difficulty">Choose Difficulty:</label>
+    <select id="difficulty">
+      <option value="easy">Easy (1-10, 3 tries)</option>
+      <option value="medium">Medium (1-50, 2 tries)</option>
+      <option value="hard">Hard (1-100, 1 try)</option>
+    </select>
+
+    <div id="game-area">
+      <p>Enter a number:</p>
+      <input type="number" id="guess-input" />
+      <button id="submit-btn">Submit Guess</button>
+      <p id="attempts"></p>
+      <div id="result" class="fade-in"></div>
+      <div id="hint"></div>
+    </div>
+
+    <button id="play-again">Play Again</button>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
