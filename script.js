@@ -1,99 +1,97 @@
-// script.js
-
-// DOM elements
-const input = document.getElementById('guess-input');
-const submitBtn = document.getElementById('submit-btn');
-const resultDisplay = document.getElementById('result');
-const hintDisplay = document.getElementById('hint');
-const attemptsDisplay = document.getElementById('attempts');
-const playAgainBtn = document.getElementById('play-again');
-const difficultySelect = document.getElementById('difficulty');
-
 let mysteryNumber;
-let maxTries;
-let triesLeft;
-let rangeMax;
+let attemptsLeft;
+const maxAttempts = 3;
+let difficultyMultiplier;
+let currentDifficulty = "easy";
+let timerInterval;
+let timeLeft = 30;
 
-// Initialize game based on selected difficulty
-function initGame() {
-  const difficulty = difficultySelect.value;
-  if (difficulty === 'easy') {
-    rangeMax = 10;
-    maxTries = 3;
-  } else if (difficulty === 'medium') {
-    rangeMax = 50;
-    maxTries = 2;
-  } else {
-    rangeMax = 100;
-    maxTries = 1;
-  }
+const winSound = document.getElementById("winSound");
+const loseSound = document.getElementById("loseSound");
 
-  mysteryNumber = Math.floor(Math.random() * rangeMax) + 1;
-  triesLeft = maxTries;
+function startGame() {
+    const difficulty = document.getElementById("difficulty").value;
+    setDifficulty(difficulty);
 
-  // Reset UI
-  input.disabled = false;
-  submitBtn.disabled = false;
-  resultDisplay.textContent = '';
-  hintDisplay.textContent = '';
-  playAgainBtn.style.display = 'none';
-  input.value = '';
-  updateAttemptsDisplay();
+    mysteryNumber = generateMysteryNumber();
+    attemptsLeft = maxAttempts;
+    timeLeft = 30;
+
+    document.getElementById("guess").value = "";
+    document.getElementById("message").textContent = "";
+    document.getElementById("attempts").textContent = `Essais restants : ${attemptsLeft}`;
+    document.getElementById("timeLeft").textContent = timeLeft;
+    document.getElementById("restartButton").style.display = "none";
+    document.getElementById("submitGuess").disabled = false;
+
+    clearInterval(timerInterval);
+    startTimer();
 }
 
-// Show attempts left
-function updateAttemptsDisplay() {
-  attemptsDisplay.textContent = `Attempts left: ${triesLeft}`;
+function setDifficulty(difficulty) {
+    currentDifficulty = difficulty;
+    switch (difficulty) {
+        case "easy":
+            difficultyMultiplier = 10;
+            break;
+        case "medium":
+            difficultyMultiplier = 50;
+            break;
+        case "hard":
+            difficultyMultiplier = 100;
+            break;
+        default:
+            difficultyMultiplier = 10;
+    }
 }
 
-// Check user's guess
-function handleGuess() {
-  const guess = parseInt(input.value);
+function generateMysteryNumber() {
+    return Math.floor(Math.random() * difficultyMultiplier) + 1;
+}
 
-  // Validate input
-  if (isNaN(guess) || guess < 1 || guess > rangeMax) {
-    resultDisplay.textContent = `Please enter a number between 1 and ${rangeMax}`;
-    return;
-  }
+function checkGuess() {
+    const userGuess = parseInt(document.getElementById("guess").value);
 
-  // Disable UI temporarily for visual effect
-  submitBtn.disabled = true;
-  input.disabled = true;
+    if (isNaN(userGuess)) {
+        document.getElementById("message").textContent = "❌ Veuillez entrer un nombre valide.";
+        return;
+    }
 
-  setTimeout(() => {
-    triesLeft--;
-    if (guess === mysteryNumber) {
-      resultDisplay.textContent = `🎉 Correct! The number was ${mysteryNumber}`;
-      endGame();
-    } else if (triesLeft > 0) {
-      resultDisplay.textContent = `❌ Wrong guess. Try again!`;
-      hintDisplay.textContent = guess < mysteryNumber ? '🔼 Hint: Try a higher number!' : '🔽 Hint: Try a lower number!';
-      updateAttemptsDisplay();
+    attemptsLeft--;
+
+    if (userGuess === mysteryNumber) {
+        document.getElementById("message").textContent = "✅ Bravo ! Vous avez trouvé le bon nombre !";
+        winSound.play();
+        endGame();
+    } else if (attemptsLeft === 0) {
+        document.getElementById("message").textContent = `❌ Perdu ! Le nombre était ${mysteryNumber}.`;
+        loseSound.play();
+        endGame();
     } else {
-      resultDisplay.textContent = `😢 You've used all attempts! The number was ${mysteryNumber}`;
-      hintDisplay.textContent = '';
-      endGame();
+        const hint = userGuess < mysteryNumber ? "plus grand" : "plus petit";
+        document.getElementById("message").textContent = `❌ Faux ! Essayez un nombre ${hint}.`;
+        document.getElementById("attempts").textContent = `Essais restants : ${attemptsLeft}`;
     }
-
-    // Re-enable UI if game not over
-    if (triesLeft > 0 && guess !== mysteryNumber) {
-      input.disabled = false;
-      submitBtn.disabled = false;
-    }
-  }, 500); // Delay for visual effect
 }
 
-// End game and show play again
 function endGame() {
-  submitBtn.disabled = true;
-  input.disabled = true;
-  playAgainBtn.style.display = 'inline-block';
+    document.getElementById("submitGuess").disabled = true;
+    document.getElementById("restartButton").style.display = "inline-block";
+    clearInterval(timerInterval);
 }
 
-// Event Listeners
-submitBtn.addEventListener('click', handleGuess);
-playAgainBtn.addEventListener('click', initGame);
-difficultySelect.addEventListener('change', initGame);
+function startTimer() {
+    timerInterval = setInterval(() => {
+        timeLeft--;
+        document.getElementById("timeLeft").textContent = timeLeft;
+        if (timeLeft <= 0) {
+            document.getElementById("message").textContent = `⏰ Temps écoulé ! Le nombre était ${mysteryNumber}.`;
+            loseSound.play();
+            endGame();
+        }
+    }, 1000);
+}
 
-// Start the first game
-window.onload = initGame;
+document.getElementById("submitGuess").addEventListener("click", checkGuess);
+document.getElementById("restartButton").addEventListener("click", startGame);
+window.addEventListener("load", startGame);
